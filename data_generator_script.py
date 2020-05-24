@@ -3,6 +3,7 @@ from math import floor
 
 FIELDS = ["AIRPORT", "SEATS", "OCCUPIED", "TIME"]
 AIRPORTS = ["LAX", "JFK", "LAX", "YVR"] # Los Angeles (x2), New York, Vancouver
+AIRPORT_AVGS = {"LAX": 0.82, "JFK": 0.83, "YVR": 0.82}
 SEATS = [200, 250, 450]
 TIMES = ["WEEKDAY", "REDEYE", "WEEKEND"]
 TIMES_ORDERED = ["WEEKDAY", "REDEYE", "WEEKDAY", "REDEYE", "WEEKDAY", "REDEYE",
@@ -30,7 +31,7 @@ def create_book(num_weeks, seed_val):
     seed(seed_val)
     lines = [",".join(FIELDS)]
     for port in AIRPORTS:
-        occupied_avg = random() / 10 + 0.8  # between 80-90% avg occupied
+        occupied_avg = AIRPORT_AVGS[port]
         for week in range(num_weeks // len(AIRPORTS)):
 
             # this gives 6 weekday, 6 REDEYE, and 6 weekend flights
