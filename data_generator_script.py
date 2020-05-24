@@ -1,37 +1,60 @@
 from random import random, seed
+from math import floor
 
 FIELDS = ["AIRPORT", "SEATS", "OCCUPIED", "TIME"]
 AIRPORTS = {"LAX", "ORD", "JFK", "YVR"} # Los Angeles, Chicago, New York, Vancouver
-AIRPLANES = {"LAX": [200, 250, 450],
-             "ORD": [250, 350, 450],
-             "JFK": [250, 450],
-             "YVR": [200, 250, 450]}
-TIMES = {"WEEKDAY", "WEEKNIGHT", "WEEKEND"}
+SEATS = [200, 250, 450]
+TIMES = ["WEEKDAY", "REDEYE", "WEEKEND"]
+TIMES_ORDERED = ["WEEKDAY", "REDEYE", "WEEKDAY", "REDEYE", "WEEKDAY", "REDEYE",
+                 "WEEKDAY", "REDEYE", "WEEKDAY", "REDEYE", "WEEKDAY", "REDEYE",
+                 "WEEKEND", "WEEKEND", "WEEKEND", "WEEKEND", "WEEKEND", "WEEKEND"]
 
 def format_line_item(airport, seats, occupied, time):
-    return "{},{},{},{}".format(airport, seats, occupied, cost)
+    return "{},{},{},{}".format(airport, seats, occupied, time)
 
-def add_information(airport, seats, occupied_percent, time):
+# adds trends to the data we should be able to find by analysis
+def add_information(port, seats, occupied_percent, time):
+    if time == "WEEKEND" and port == "YVR":
+        occupied_percent += 0.05
+    if time == "REDEYE" and port == "JFK":
+        occupied_percent += 0.05
+    if port == "LAX" and seats != 450:
+        occupied_percent += 0.05
 
+    # canadians use percentage instead of seat count
+    occupied = occupied_percent if port == "YVR" else floor(seats * occupied_percent)
 
-    occupied = occupied_percent if port = "YVR" else seats * occupied_percent
+    return port, seats, occupied, time
 
-    return airport, seats, occupied, cost
-
-def create_book(line_count, seed):
-    seed(1)
-    lines = []
+def create_book(num_weeks, seed_val):
+    seed(seed_val)
+    lines = [",".join(FIELDS)]
     for port in AIRPORTS:
         occupied_avg = random() / 10 + 0.8  # between 80-90% avg occupied
-        seat_options = AIRPLANES[port]
-        for i in range(line_count // len(AIRPORTS)):
-            seats = seat_options[i % len(seat_options)]
-            occupied_del = random() / 5 - 0.1  # shift of up to 10% from the average
-            occupied_percent = occupied_avg + occupied_del
-            occupied_seats = occupied_percent * seats
+        for week in range(num_weeks // len(AIRPORTS)):
 
-            data = add_information(airport, seats, occupied, cost)
+            # this gives 6 weekday, 6 REDEYE, and 6 weekend flights
+            i = 0
+            for time in TIMES_ORDERED:
+                seats = SEATS[i % len(SEATS)]
+                occupied_del = random() / 10 - 0.05  # shift of up to 5% from the average
+                occupied_percent = occupied_avg + occupied_del
+                i += 1
 
-            lines.append(format_line_item(data))
+                port, seats, occupied, time = add_information(port, seats, occupied_percent, time)
+                lines.append(format_line_item(port, seats, occupied, time))
 
     return lines
+
+
+line_items = create_book(num_weeks=100, seed_val=1)
+line_count = len(line_items)
+# print(line_count)
+
+line_items_chronological = [",".join(FIELDS)]
+section_size = (line_count-1) // len(AIRPORTS)
+for flight_index in range(1, section_size):
+    for port_index in range(len(AIRPORTS)):
+        line_items_chronological.append(line_items[flight_index + port_index * section_size])
+
+[print(flight) for flight in line_items_chronological]
