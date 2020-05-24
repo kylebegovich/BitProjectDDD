@@ -47,7 +47,20 @@ def create_book(num_weeks, seed_val):
     return lines
 
 
+def validate_lines(line_items):
+    for line in line_items[1:]:
+        line_arr = line.split(',')
+        if line_arr[2] > line_arr[1]:
+            print("ISSUE ON LINE:", line, line_arr[2], line_arr[1])
+            return False
+
+    return True
+
+
 line_items = create_book(num_weeks=100, seed_val=1)
+if not validate_lines(line_items):
+    exit(1)
+
 line_count = len(line_items)
 # print(line_count)
 
