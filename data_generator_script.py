@@ -2,7 +2,7 @@ from random import random, seed
 from math import floor
 
 FIELDS = ["AIRPORT", "SEATS", "OCCUPIED", "TIME"]
-AIRPORTS = {"LAX", "ORD", "JFK", "YVR"} # Los Angeles, Chicago, New York, Vancouver
+AIRPORTS = {"LAX", "LAX", "JFK", "YVR"} # Los Angeles (x2), New York, Vancouver
 SEATS = [200, 250, 450]
 TIMES = ["WEEKDAY", "REDEYE", "WEEKEND"]
 TIMES_ORDERED = ["WEEKDAY", "REDEYE", "WEEKDAY", "REDEYE", "WEEKDAY", "REDEYE",
